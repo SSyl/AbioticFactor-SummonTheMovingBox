@@ -109,7 +109,7 @@ When reporting issues, please include: UE4SS version, game version, other instal
 
 [size=3][b]Source Code[/b][/size]
 
-[url=https://github.com/SSyl/SummonTheMovingBox]Source available on GitHub[/url].
+[url=https://github.com/SSyl/AbioticFactor-SummonTheMovingBox]Source available on GitHub[/url].
 
 [size=3][b]Credits[/b][/size]
 
