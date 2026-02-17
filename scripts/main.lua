@@ -206,13 +206,14 @@ local COLOR_GREEN = { R = 0.4, G = 1.0, B = 0.4, A = 1.0 }
 local CHAT_PREFIX = "[SummonTheBox]"
 
 local function SendChatMessage(message)
-    local playerController = UEHelpers.GetPlayerController()
-    if not playerController:IsValid() then return end
-    local playerState = playerController.PlayerState
-    if not playerState:IsValid() then return end
+    local gameMode = FindFirstOf("Abiotic_Survival_GameMode_C")
+    if not gameMode:IsValid() then return end
     local prefix = Config.Summon.Notifications.ShowModName and CHAT_PREFIX or ""
-    playerController:Local_DisplayTextChatMessage(
-        prefix, COLOR_GREEN, message, COLOR_WHITE, playerState, false
+    gameMode:SendTextChatMessageToAllPlayers(
+        false, false,           -- FactionCheck, FactionOnlySee
+        prefix, COLOR_GREEN,    -- Prefix, PrefixColor
+        message, COLOR_WHITE,   -- Message, MessageColor
+        "", nil, false          -- ExcludedCallerName, PlayerState, IsPlayerChatTextMessage
     )
 end
 

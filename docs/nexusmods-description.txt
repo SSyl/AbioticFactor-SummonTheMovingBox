@@ -1,0 +1,116 @@
+[size=6][b][center]Summon The Moving Box[/center][/b][/size]
+A UE4SS Lua mod that enhances your favorite cardboard companion. Expand Boxy's storage, speed him up, tweak his gathering rate, and summon him on demand using a Organ.
+
+[size=3][b]Features[/b][/size]
+
+All features are independently configurable. Set any multiplier to 1.0 or disable any toggle to keep vanilla behavior with zero overhead.
+
+[b]Boxy Enhancements[/b]
+[list]
+[*][b]Expanded Storage[/b] - Increase Boxy's inventory from 6 to up to 42 slots (7x6 grid). Persists through save/load. Default: 18 slots
+[*][b]Movement Speed[/b] - Multiply Boxy's walk speed so he can keep up with you. Default: 1.5x
+[*][b]Gathering Speed[/b] - Multiply how frequently Boxy checks for nearby items to pick up. Vanilla checks every 10 seconds. Default: 2.0x (every 5 seconds)
+[*][b]Disable Collision[/b] - Walk right through Boxy instead of getting body-blocked in doorways. Default: off
+[/list]
+
+[b]Summon Boxy[/b]
+[list]
+[*][b]Organ Summoning[/b] - Use the Organ's secondary action (right-click) to call Boxy to your location. If Boxy already exists, he's teleported near you. If not, the game's AI director spawns him nearby
+[*][b]Cooldown[/b] - Configurable cooldown between summons with on-screen warning. Default: 30 seconds
+[*][b]Proximity Check[/b] - Blocks the summon if Boxy is already close to you. Default: 10 meters
+[*][b]Consume Chance[/b] - Percent chance the Organ is consumed on use. Default: 10%
+[*][b]Fog Chance[/b] - Percent chance that summoning Boxy triggers a fog weather event. Something followed him in... Default: 2.5%
+[*][b]Notifications[/b] - Chat messages when Boxy is summoned, screen warnings for cooldowns, and fog alerts. All individually toggleable
+[/list]
+
+[size=3][b]Requirements[/b][/size]
+
+[list]
+[*]UE4SS - Recommended: [url=https://www.nexusmods.com/abioticfactor/mods/35]NexusMods release for Abiotic Factor[/url] (Oct 2025). Other builds may work but are experimental.
+[*]Abiotic Factor (tested on v1.2 Holiday Cryosphere Update)
+[/list]
+
+[size=3][b]Installation[/b][/size]
+
+[b]Vortex (Recommended)[/b]
+[list=1]
+[*]Install UE4SS if you haven't already from [url=https://www.nexusmods.com/abioticfactor/mods/35]Nexus Mods[/url]
+[*]Click "Mod manager download" or "Vortex" on this page and you're done
+[/list]
+
+[b]Manual[/b]
+[list=1]
+[*]Install UE4SS if you haven't already from [url=https://www.nexusmods.com/abioticfactor/mods/35]Nexus Mods[/url]
+[*]Download and extract to [code][...]Steam\steamapps\common\AbioticFactor\AbioticFactor\Binaries\Win64[/code]
+[*]Folder structure should be: [code]Mods\SummonTheMovingBox\scripts\main.lua[/code]
+[/list]
+
+[b]Verify it works:[/b] On game launch, check [b]UE4SS.log[/b] for "[Summon The Moving Box] MOD LOADING"
+
+[b]To uninstall:[/b] Delete the Mods/SummonTheMovingBox/ folder.
+[b]To temporarily disable:[/b] Rename or delete the [b]enabled.txt[/b] file in the mod folder.
+
+[size=3][b]Configuration[/b][/size]
+
+Edit [b]config.lua[/b] in the mod folder to adjust settings. The file is commented with descriptions and default values.
+
+Example config:
+[code]
+StorageSlots = 18,              -- 1-42 (7x6 grid max), vanilla is 6
+SpeedMultiplier = 1.5,          -- 1.0 = vanilla
+GatheringSpeedMultiplier = 2.0, -- 1.0 = vanilla (checks every 10s), max 5.0 (every 2s)
+DisableCollision = false,       -- Players walk through Boxy
+
+Summon = {
+    Enabled = true,
+    ConsumeChance = 10.0,        -- 0 = never, 100 = always
+    FogChance = 2.5,             -- 0 = never
+    Cooldown = 30,               -- Seconds between summons
+    ProximityDistance = 10,       -- Meters, 0 = disable check
+    Notifications = {
+        CooldownWarning = true,  -- Screen warning when summoning too soon
+        SummonChat = true,       -- Chat message when Boxy is summoned
+        FogWarning = true,       -- Screen + chat when fog triggers
+        ShowModName = false,     -- Prepend [SummonTheBox] to chat messages
+    },
+},
+[/code]
+
+Changes take effect on game restart.
+
+[size=3][b]Multiplayer[/b][/size]
+
+Works in multiplayer. The host needs the mod installed for Boxy enhancements (speed, gathering, collision) and to handle summon requests. Players who want to summon Boxy also need the mod installed so the Organ right-click works.
+
+[b]How summoning works in co-op:[/b] Any player with the mod can use an Organ to request a summon. The host's mod receives the request and spawns/teleports Boxy. Chat notifications are broadcast to all players. Cooldown and proximity warnings are shown to the player who triggered the summon.
+
+[b]Storage expansion[/b] persists through save/load on the host's save file. Clients joining a modded host will see the expanded storage automatically.
+
+[size=3][b]FAQ[/b][/size]
+
+[b]How do I get an Organ?[/b]
+Once you complete Flathill, you can get them from killing [b]Symphonist[/b] enemies. Alternatively, you can trade Anomalies to Marion for Partial Organs. It takes 5 [b]Partial Organs[/b] to make 1 regular [i]Organ[/i].
+
+[b]Will I lose items if I uninstall the mod?[/b]
+If you uninstall the mod, Boxy's inventory reverts to the vanilla 6 slots. Anything stored in slots 7 and above will be lost. Be sure to collect your items before uninstalling.
+
+[b]Does this work on dedicated servers?[/b]
+Yes, tested and working. The dedicated server must have the mod installed. Boxy's movement speed and gathering speed are controlled by the server's [b]config.lua[/b].
+
+[b]My Organs keep disappearing![/b]
+By default there's a 10% chance that using an Organ to summon Boxy consumes it entirely. You can tweak the percentage or remove it entirely by setting [b]ConsumeChance = 0[/b] in the mod's [b]config.lua[/b] file.
+
+[b]Why did fog appear when I summoned Boxy? / There's never fog when I summon Boxy![/b]
+There's a small chance (default 2.5%) that summoning Boxy triggers a fog weather event. You can adjust this with [b]FogChance[/b] in [b]config.lua[/b] - set it to 0 to disable, or crank it up if you like the atmosphere.
+
+[size=3][b]Reporting Issues[/b][/size]
+
+When reporting issues, please include: UE4SS version, game version, other installed UE4SS mods, and [b]UE4SS.log[/b]
+
+[size=3][b]Source Code[/b][/size]
+
+[url=https://github.com/SSyl/SummonTheMovingBox]Source available on GitHub[/url].
+
+[size=3][b]Credits[/b][/size]
+
+Built on [url=https://github.com/UE4SS-RE/RE-UE4SS]UE4SS[/url] by the RE-UE4SS team.
