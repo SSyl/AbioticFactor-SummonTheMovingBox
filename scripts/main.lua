@@ -14,7 +14,6 @@ local CONFIG_SCHEMA = {
     { path = "GatheringSpeedMultiplier",  type = "number",  default = 2.0,   min = 0.1, max = 5.0 },
     { path = "DisableCollision",          type = "boolean", default = false },
     { path = "Summon.Enabled",            type = "boolean", default = true },
-    { path = "Summon.UpdateOrganDescription", type = "boolean", default = true },
     { path = "Summon.ConsumeChance",      type = "number",  default = 10.0,  min = 0,   max = 100 },
     { path = "Summon.FogChance",          type = "number",  default = 2.5,   min = 0,   max = 100 },
     { path = "Summon.Cooldown",           type = "number",  default = 30,    min = 1 },
@@ -173,43 +172,6 @@ local function ModifyGatheringSpeed(boxy)
     kismetLib:K2_SetTimer(controller, "CheckForNearbyItems", newInterval, true, false, 0.0, 0.0)
 
     Log.Debug("GatheringSpeed: Item check interval %.1fs -> %.1fs", VANILLA_ITEM_CHECK_INTERVAL, newInterval)
-end
-
--- ============================================================
--- FEATURE: Update Organ Description
--- ============================================================
-
-local ORGAN_DESCRIPTION = "A hard-shelled gas apparatus that can produce noises audible far beyond its size and shape would imply."
-    .. " Use with secondary action to summon a foggy friend."
-
-local organDescriptionUpdated = false
-
-local function UpdateOrganDescription()
-    if not Config.Summon.UpdateOrganDescription then return end
-    if organDescriptionUpdated then return end
-
-    local itemTable = StaticFindObject("/Game/Blueprints/Items/ItemTable_Pickups.ItemTable_Pickups")
-    if not itemTable:IsValid() then
-        Log.Warning("UpdateOrganDescription: ItemTable_Pickups not found")
-        return
-    end
-
-    local organRow = itemTable:FindRow("organ")
-    if not organRow then
-        Log.Warning("UpdateOrganDescription: organ row not found")
-        return
-    end
-
-    local okDesc = pcall(function()
-        organRow.ItemDescription_38_E5F7B38A4F3C41EB9DA52CA14654D303 = FText(ORGAN_DESCRIPTION)
-    end)
-
-    if okDesc then
-        organDescriptionUpdated = true
-        Log.Debug("Organ description updated")
-    else
-        Log.Warning("UpdateOrganDescription: Failed to set description")
-    end
 end
 
 -- ============================================================
@@ -560,22 +522,24 @@ local function OnGameState(world)
 
     Log.Debug("Gameplay detected: %s", mapName)
 
-    -- Register NotifyOnNewObject for future Boxy spawns (once only)
+    -- Hook Boxy's ReceiveBeginPlay for future spawns (components ready, no async handoff)
     if not notifyRegistered then
         notifyRegistered = true
-        NotifyOnNewObject("/Game/Blueprints/Characters/NPCs/NPC_Boxy.NPC_Boxy_C", function(boxy)
-            Log.Debug("NotifyOnNewObject: Boxy spawned")
-            ExecuteWithDelay(500, function()
-                ExecuteInGameThread(function()
-                    ProcessBoxy(boxy)
-                end)
-            end)
-        end)
-        Log.Debug("NotifyOnNewObject registered for NPC_Boxy_C")
+        local okBoxyHook, errBoxyHook = pcall(RegisterHook,
+            "/Game/Blueprints/Characters/NPCs/NPC_Boxy.NPC_Boxy_C:ReceiveBeginPlay",
+            function(Context)
+                local boxy = Context:get()
+                if not boxy:IsValid() then return end
+                Log.Debug("Boxy ReceiveBeginPlay fired")
+                ProcessBoxy(boxy)
+            end
+        )
+        if okBoxyHook then
+            Log.Debug("Boxy ReceiveBeginPlay hook registered")
+        else
+            Log.Warning("Boxy ReceiveBeginPlay hook failed: %s", tostring(errBoxyHook))
+        end
     end
-
-    -- Update organ item description
-    UpdateOrganDescription()
 
     -- Register summon hooks (client trigger + server handler)
     RegisterSummonHook()
