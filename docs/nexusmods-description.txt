@@ -114,3 +114,5 @@ When reporting issues, please include: UE4SS version, game version, other instal
 [size=3][b]Credits[/b][/size]
 
 Built on [url=https://github.com/UE4SS-RE/RE-UE4SS]UE4SS[/url] by the RE-UE4SS team.
+
+Thanks to Caites' [url=https://www.nexusmods.com/abioticfactor/mods/91]Better Boxy[/url] mod for inspiration.
