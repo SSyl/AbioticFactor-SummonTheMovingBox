@@ -1,25 +1,25 @@
 [size=6][b][center]Summon The Moving Box[/center][/b][/size]
-A UE4SS Lua mod that enhances your favorite cardboard companion. Expand Boxy's storage, speed him up, tweak his gathering rate, and summon him on demand using a Organ.
+A UE4SS Lua mod that enhances your favorite foggy companion. Expand Boxy's storage, speed them up, tweak their gathering rate, and summon them on demand using an Organ which can be acquired from a Symphonist or by trading with Marion.
 
 [size=3][b]Features[/b][/size]
 
-All features are independently configurable. Set any multiplier to 1.0 or disable any toggle to keep vanilla behavior with zero overhead.
+All features are independently configurable. Set any multiplier to 1.0 or disable any toggle to keep vanilla behavior with zero overhead. I set what I felt was fair-and-balanced defaults, but feel free to change as you wish.
 
 [b]Boxy Enhancements[/b]
 [list]
 [*][b]Expanded Storage[/b] - Increase Boxy's inventory from 6 to up to 42 slots (7x6 grid). Persists through save/load. Default: 18 slots
-[*][b]Movement Speed[/b] - Multiply Boxy's walk speed so he can keep up with you. Default: 1.5x
+[*][b]Movement Speed[/b] - Multiply Boxy's walk speed so they can keep up with you. Default: 1.5x
 [*][b]Gathering Speed[/b] - Multiply how frequently Boxy checks for nearby items to pick up. Vanilla checks every 10 seconds. Default: 2.0x (every 5 seconds)
 [*][b]Disable Collision[/b] - Walk right through Boxy instead of getting body-blocked in doorways. Default: off
 [/list]
 
 [b]Summon Boxy[/b]
 [list]
-[*][b]Organ Summoning[/b] - Use the Organ's secondary action (right-click) to call Boxy to your location. If Boxy already exists, he's teleported near you. If not, the game's AI director spawns him nearby
+[*][b]Organ Summoning[/b] - Use the Organ's secondary action (right-click) to call Boxy to your location. If Boxy already exists, they're teleported near you. If not, the game's AI director spawns them nearby
 [*][b]Cooldown[/b] - Configurable cooldown between summons with on-screen warning. Default: 30 seconds
 [*][b]Proximity Check[/b] - Blocks the summon if Boxy is already close to you. Default: 10 meters
 [*][b]Consume Chance[/b] - Percent chance the Organ is consumed on use. Default: 10%
-[*][b]Fog Chance[/b] - Percent chance that summoning Boxy triggers a fog weather event. Something followed him in... Default: 2.5%
+[*][b]Fog Chance[/b] - Percent chance that summoning Boxy triggers a fog weather event. Something followed them in... Default: 2.5%
 [*][b]Notifications[/b] - Chat messages when Boxy is summoned, screen warnings for cooldowns, and fog alerts. All individually toggleable
 [/list]
 
