@@ -20,6 +20,7 @@ local CONFIG_SCHEMA = {
     { path = "Summon.ProximityDistance",   type = "number",  default = 10,    min = 0 },
     { path = "Summon.Notifications.CooldownWarning", type = "boolean", default = true },
     { path = "Summon.Notifications.SummonChat",      type = "boolean", default = true },
+    { path = "Summon.Notifications.DismissChat",     type = "boolean", default = true },
     { path = "Summon.Notifications.FogWarning",      type = "boolean", default = true },
     { path = "Summon.Notifications.ShowModName",      type = "boolean", default = false },
     { path = "Debug",                     type = "boolean", default = false },
@@ -49,6 +50,7 @@ local gameStateHookFired = false
 local hookRegistered = false
 local notifyRegistered = false
 local summonHooksRegistered = false
+local dismissHookRegistered = false
 
 -- Track processed Boxys to avoid re-processing
 local processedBoxys = setmetatable({}, { __mode = "k" })
@@ -377,6 +379,36 @@ local function ConsumeOrgan(player)
 end
 
 -- ============================================================
+-- FEATURE: Dismiss Boxy
+-- ============================================================
+
+local function DismissBoxy()
+    local aiDirector = FindFirstOf("Abiotic_AIDirector_C")
+    if not aiDirector:IsValid() then
+        Log.Warning("DismissBoxy: AIDirector not found")
+        return false
+    end
+
+    local boxy = aiDirector.ActiveBoxy
+    if not boxy:IsValid() then
+        Log.Debug("DismissBoxy: no active Boxy")
+        return false
+    end
+
+    local okDestroy = pcall(function()
+        boxy:K2_DestroyActor()
+    end)
+
+    if okDestroy then
+        Log.Debug("Boxy dismissed")
+        return true
+    else
+        Log.Warning("DismissBoxy: K2_DestroyActor failed")
+        return false
+    end
+end
+
+-- ============================================================
 -- SUMMON: Client-side trigger (sends RPC to server)
 -- ============================================================
 
@@ -509,6 +541,38 @@ local function RegisterSummonHook()
     end
 end
 
+local function RegisterDismissHook()
+    local dismissKey = Config.Dismiss and Config.Dismiss.Keybind
+    if not dismissKey then return end
+    if dismissHookRegistered then return end
+    dismissHookRegistered = true
+
+    local okDismiss, errDismiss = pcall(RegisterKeyBind, dismissKey, function()
+        ExecuteInGameThread(function()
+            local player = UEHelpers.GetPlayer()
+            if not player:IsValid() then return end
+
+            local currentRow = player.CurrentItemRow:ToString()
+            if currentRow ~= ORGAN_ROW_NAME then return end
+
+            local dismissed = DismissBoxy()
+            if dismissed then
+                if Config.Summon.Notifications.DismissChat then
+                    SendChatMessage("Boxy was dismissed by " .. GetPlayerName(player) .. ".")
+                end
+            else
+                SendScreenWarning("No Boxy to dismiss!", 2, false)
+            end
+        end)
+    end)
+
+    if okDismiss then
+        Log.Debug("Dismiss keybind registered (%s)", tostring(dismissKey))
+    else
+        Log.Warning("Dismiss keybind failed: %s", tostring(errDismiss))
+    end
+end
+
 -- ============================================================
 -- LIFECYCLE
 -- ============================================================
@@ -544,6 +608,7 @@ local function OnGameState(world)
 
     -- Register summon hooks (client trigger + server handler)
     RegisterSummonHook()
+    RegisterDismissHook()
 
     -- Check for existing Boxy (late-joining clients)
     ExecuteWithDelay(2500, function()
