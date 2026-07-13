@@ -20,9 +20,11 @@ local CONFIG_SCHEMA = {
     { path = "Summon.ProximityDistance",   type = "number",  default = 10,    min = 0 },
     { path = "Summon.Notifications.CooldownWarning", type = "boolean", default = true },
     { path = "Summon.Notifications.SummonChat",      type = "boolean", default = true },
-    { path = "Summon.Notifications.DismissChat",     type = "boolean", default = true },
     { path = "Summon.Notifications.FogWarning",      type = "boolean", default = true },
     { path = "Summon.Notifications.ShowModName",      type = "boolean", default = false },
+    { path = "Dismiss.Enabled",                       type = "boolean", default = true },
+    { path = "Dismiss.Keybind",                                       default = Key.R },
+    { path = "Dismiss.Notifications.DismissChat",     type = "boolean", default = true },
     { path = "Debug",                     type = "boolean", default = false },
 }
 
@@ -542,6 +544,7 @@ local function RegisterSummonHook()
 end
 
 local function RegisterDismissHook()
+    if not Config.Dismiss.Enabled then return end
     local dismissKey = Config.Dismiss and Config.Dismiss.Keybind
     if not dismissKey then return end
     if dismissHookRegistered then return end
@@ -557,7 +560,7 @@ local function RegisterDismissHook()
 
             local dismissed = DismissBoxy()
             if dismissed then
-                if Config.Summon.Notifications.DismissChat then
+                if Config.Dismiss.Notifications.DismissChat then
                     SendChatMessage("Boxy was dismissed by " .. GetPlayerName(player) .. ".")
                 end
             else

@@ -23,6 +23,12 @@ All features are independently configurable. Set any multiplier to 1.0 or disabl
 [*][b]Notifications[/b] - Chat messages when Boxy is summoned, screen warnings for cooldowns, and fog alerts. All individually toggleable
 [/list]
 
+[b]Dismiss Boxy[/b]
+[list]
+[*][b]Organ Dismiss[/b] - While holding the Organ, press the dissmiss key (default R) to send Boxy away.
+[*][b]Notification[/b] - Chat message when Boxy is dismissed, toggleable
+[/list]
+
 [size=3][b]Requirements[/b][/size]
 
 [list]
@@ -74,6 +80,15 @@ Summon = {
         ShowModName = false,     -- Prepend [SummonTheBox] to chat messages
     },
 },
+
+Dismiss = {
+    Enabled = true,
+    Keybind = Key.R,            -- Key to dismiss Boxy while holding the Organ
+    Notifications = {
+        DismissChat = true,      -- Chat message when Boxy is dismissed
+    }
+},
+
 [/code]
 
 Changes take effect on game restart.
@@ -99,6 +114,9 @@ Yes, tested and working. The dedicated server must have the mod installed. Boxy'
 
 [b]My Organs keep disappearing![/b]
 By default there's a 10% chance that using an Organ to summon Boxy consumes it entirely. You can tweak the percentage or remove it entirely by setting [b]ConsumeChance = 0[/b] in the mod's [b]config.lua[/b] file.
+
+[b]How do I send Boxy away?[/b]
+While holding the Organ, press the dismiss keybind (default R) to make Boxy leave. You can change the key with [b]Dismiss.Keybind[/b] or disable the feature with [b]Dismiss.Enabled=false[/b] in [b]config.lua[/b].
 
 [b]Why did fog appear when I summoned Boxy? / There's never fog when I summon Boxy![/b]
 There's a small chance (default 2.5%) that summoning Boxy triggers a fog weather event. You can adjust this with [b]FogChance[/b] in [b]config.lua[/b] - set it to 0 to disable, or crank it up if you like the atmosphere.

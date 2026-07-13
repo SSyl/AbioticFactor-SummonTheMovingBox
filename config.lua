@@ -12,13 +12,16 @@ return {
         Notifications = {
             CooldownWarning = true, -- Screen warning with beep when summoning too soon [default: true]
             SummonChat = true,      -- Chat message when Boxy is summoned [default: true]
-            DismissChat = true,     -- Chat message when Boxy is dismissed [default: true]
             FogWarning = true,      -- Screen + chat message when fog is triggered [default: true]
             ShowModName = false,    -- Prepend [SummonTheBox] to chat messages [default: false]
         },
     },
     Dismiss = {
-        Keybind = Key.R,            -- Key to dismiss Boxy when holding the organ (nil = disabled) [default: Key.R]
+        Enabled = true,               -- Master toggle for dismiss feature [default: true]
+        Keybind = Key.R,              -- Key to dismiss Boxy when holding the organ (nil = disabled) [default: Key.R]
+        Notifications = {
+            DismissChat = true,       -- Chat message when Boxy is dismissed [default: true]
+        },
     },
     Debug = false,
 }
